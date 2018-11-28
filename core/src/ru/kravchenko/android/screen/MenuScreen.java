@@ -93,6 +93,4 @@ public class MenuScreen extends Base2DScreen {
         System.out.println(" Tm = " + stopDotX);
     }
 
-
-
 }
