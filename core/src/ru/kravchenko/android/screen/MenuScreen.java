@@ -3,94 +3,97 @@ package ru.kravchenko.android.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.kravchenko.android.base.Base2DScreen;
+import ru.kravchenko.android.math.Rectangle;
+import ru.kravchenko.android.sprite.Background;
+import ru.kravchenko.android.sprite.ExitButton;
+import ru.kravchenko.android.sprite.Star;
+import ru.kravchenko.android.sprite.StartButton;
 
 public class MenuScreen extends Base2DScreen {
 
-    private Texture img;
-    private Vector2 position;
-    private Vector2 speed;
-    private Vector2 touchMouse;
-    private float stopDotX;
+    private static final int STAR_COUNT = 256;
+
+    private Texture imageBackgraund;
+
+    private TextureAtlas textureAtlas;
+
+    private Background background;
+
+    private Star[] star;
+
+    private StartButton startButton;
+
+    private ExitButton exitButton;
 
     @Override
     public void show() {
         super.show();
-        img = new Texture("dot.png");
-        position = new Vector2(0,0);
-        speed = new Vector2(0, 0);
-        touchMouse = new Vector2();
+        textureAtlas = new TextureAtlas("textures/menuAtlas.tpack");
+        imageBackgraund = new Texture("textures/sky.jpg");
+        background = new Background(new TextureRegion(imageBackgraund));
+        star = new Star[STAR_COUNT];
+        startButton = new StartButton(textureAtlas);
+        exitButton = new ExitButton(textureAtlas);
+        for (int i = 0; i < star.length; i++) { star[i] = new Star(textureAtlas); }
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
+        update(delta);
+        draw();
+    }
+
+    public void update(float delta) {
+        startButton.update(delta);
+        exitButton.update(delta);
+        for (int i = 0; i < star.length; i++) { star[i].update(delta); }
+    }
+
+    public void draw() {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(img, position.x , position.y);
+        background.draw(batch);
+        for (int i = 0; i < star.length; i++) { star[i].draw(batch); }
+        startButton.draw(batch);
+        exitButton.draw(batch);
         batch.end();
-        position.add(speed);
-        stopDraw();
-        log();
+    }
+
+    @Override
+    public void resize(Rectangle worldBounds) {
+        super.resize(worldBounds);
+        background.resize(worldBounds);
+        for (int i = 0; i < star.length; i++) { star[i].resize(worldBounds); }
+        startButton.resize(worldBounds);
+        exitButton.resize(worldBounds);
     }
 
     @Override
     public void dispose() {
-        img.dispose();
+        imageBackgraund.dispose();
+        textureAtlas.dispose();
         super.dispose();
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        super.touchDown(screenX, screenY, pointer, button);
-        touchMouse.set(screenX, Gdx.graphics.getHeight() - screenY);
-        System.out.println();
-        System.out.println("TOUCHMOUSE**** X = " + touchMouse.x + " Y = " + touchMouse.y);
-        stopDotX = touchMouse.x;
-        System.out.println();
-        correctSpeed();
-        return false;
+    public boolean touchDown(Vector2 touch, int pointer) {
+        startButton.touchDown(touch, pointer);
+        exitButton.touchDown(touch, pointer);
+        return super.touchDown(touch, pointer);
     }
 
-    /**
-     * Метод корректировки скорости
-     * объекта, по сути управляет перемещением в пространстве.
-     */
-
-    public void correctSpeed () {
-        if(touchMouse.x != 0) {
-            touchMouse.sub(position).nor();
-            speed.set(touchMouse);
-        }
-    }
-
-    /**
-     * Метод остановки объекта
-     * по маркеру stopDotX.
-     */
-
-    public void stopDraw(){
-       if (Math.round(position.x) == stopDotX) {
-            speed.x = 0;
-            speed.y = 0;
-            System.out.println("STOP MACHINE!!!");
-        }
-
-    }
-
-    /**
-     * Метод логер.
-     */
-
-    public void log() {
-        touchMouse.nor();
-        System.out.println(" position.x " + position.x + " position.y = " + position.y);
-        System.out.println(" speed.x " + speed.x + " speed.y = " + speed.y);
-        System.out.println(" touchMouse.x " + touchMouse.x + " touchMouse.y = " + touchMouse.y);
-        System.out.println(" Tm = " + stopDotX);
+    @Override
+    public boolean touchUp(Vector2 touch, int pointer) {
+        startButton.touchUp(touch, pointer);
+        exitButton.touchUp(touch, pointer);
+        return super.touchUp(touch, pointer);
     }
 
 }
