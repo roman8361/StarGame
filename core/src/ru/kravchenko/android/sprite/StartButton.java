@@ -10,16 +10,18 @@ public class StartButton extends Sprite {
 
     private Rectangle worldBounds;
 
+    private final float SIZE_START_BUTTON = 0.17f;
+
     public StartButton(TextureAtlas atlas) {
         super(atlas.findRegion("btPlay"));
-        setHeigthProportion(0.2f);
+        setHeigthProportion(SIZE_START_BUTTON);
     }
 
     @Override
     public void resize(Rectangle worldBounce) {
         super.resize(worldBounce);
         this.worldBounds = worldBounce;
-        position.set(-0.22f, -0.32f);
+        position.set(SIZE_START_BUTTON * -1, SIZE_START_BUTTON * -2);
     }
 
     @Override
@@ -29,19 +31,20 @@ public class StartButton extends Sprite {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        if (chekInForm(touch)) setHeigthProportion(0.1f);
+        if (isMe(touch)) setHeigthProportion(SIZE_START_BUTTON / 2);
         return super.touchDown(touch, pointer);
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
-        setHeigthProportion(0.2f);
+        setHeigthProportion(SIZE_START_BUTTON);
         return super.touchUp(touch, pointer);
     }
 
-    private boolean chekInForm(Vector2 touch){
-        if (touch.x >= 40 && touch.x <= 140 && touch.y >= 40 && touch.y <= 170) return true;
-        return false;
+    @Override
+    public boolean touchDragged(Vector2 touch, int pointer) {
+        if (isMe(touch)) setHeigthProportion(SIZE_START_BUTTON / 2);
+        return super.touchDragged(touch, pointer);
     }
 
 }

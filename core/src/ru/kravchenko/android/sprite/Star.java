@@ -24,7 +24,7 @@ public class Star extends Sprite {
         this.worldBounds = worldBounce;
         float positionXStar = Randomes.nextFloat(worldBounce.getLeft(), worldBounce.getRight());
         float positionYStar = Randomes.nextFloat(worldBounce.getBottom(), worldBounce.getTop());
-        System.out.println("star X " + positionXStar + " star Y " + positionYStar);
+     //   System.out.println("star X " + positionXStar + " star Y " + positionYStar);
         position.set(positionXStar,positionYStar);
     }
 

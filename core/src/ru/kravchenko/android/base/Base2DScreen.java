@@ -58,7 +58,7 @@ public class Base2DScreen implements Screen, InputProcessor {
         worldBounds.setWidth(1f * aspect);
         MatrixUtils.calcTransitionMatrix(worldToGl, worldBounds, glBounds);
         batch.setProjectionMatrix(worldToGl);
-        MatrixUtils.calcTransitionMatrix(screenToWorld, worldBounds, worldBounds );
+        MatrixUtils.calcTransitionMatrix(screenToWorld, screenBounds, worldBounds );
         resize(worldBounds);
     }
 

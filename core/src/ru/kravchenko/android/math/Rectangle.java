@@ -88,6 +88,8 @@ public class Rectangle {
     }
 
     public boolean isMe(Vector2 touch) {
+        System.out.println("touch.x " + touch.x);
+        System.out.println("getLeft() " + getLeft());
         return touch.x >= getLeft() && touch.x <= getRight() && touch.y >= getBottom() && touch.y <= getTop();
     }
 

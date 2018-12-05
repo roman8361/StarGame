@@ -2,7 +2,6 @@ package ru.kravchenko.android.sprite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.kravchenko.android.base.Sprite;
@@ -12,16 +11,20 @@ public class ExitButton extends Sprite {
 
     private Rectangle worldBounds;
 
+    private final float SIZE_EXIT_BUTTON = 0.15f;
+
     public ExitButton(TextureAtlas atlas) {
         super(atlas.findRegion("btExit"));
-        setHeigthProportion(0.17f);
+        setHeigthProportion(SIZE_EXIT_BUTTON);
+        System.out.println("getBottom() " + getBottom());
+
     }
 
     @Override
     public void resize(Rectangle worldBounce) {
         super.resize(worldBounce);
-        this.worldBounds = worldBounce;
-        position.set(0.2f, -0.34f);
+        this.worldBounds = worldBounce;   // position.set(0.15f, -0.36f);
+        position.set(SIZE_EXIT_BUTTON, SIZE_EXIT_BUTTON * -2 - 0.06f);
     }
 
     @Override
@@ -29,20 +32,20 @@ public class ExitButton extends Sprite {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-    //    if (chekInForm(touch)) setHeigthProportion(0.1f);
-        if (chekInForm(touch)) Gdx.app.exit();
+        if (isMe(touch))Gdx.app.exit();
         return super.touchDown(touch, pointer);
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
-        setHeigthProportion(0.17f);
+        setHeigthProportion(SIZE_EXIT_BUTTON);
         return super.touchUp(touch, pointer);
     }
 
-    private boolean chekInForm(Vector2 touch){
-        if (touch.x >= 290 && touch.x <= 400 && touch.y >= 40 && touch.y <= 155) return true;
-        return false;
+    @Override
+    public boolean touchDragged(Vector2 touch, int pointer) {
+        if (isMe(touch))Gdx.app.exit();
+        return super.touchDragged(touch, pointer);
     }
 
 }

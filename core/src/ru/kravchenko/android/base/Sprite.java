@@ -46,6 +46,8 @@ public abstract class Sprite extends Rectangle {
 
     public boolean touchUp(Vector2 touch, int pointer) { return false; }
 
+    public boolean touchDragged(Vector2 touch, int pointer) { return false; }
+
     public float getAngle() { return angle; }
 
     public void setAngle(float angle) { this.angle = angle; }

@@ -96,4 +96,10 @@ public class MenuScreen extends Base2DScreen {
         return super.touchUp(touch, pointer);
     }
 
+    @Override
+    public boolean touchDragged(Vector2 touch, int pointer) {
+        startButton.touchDragged(touch, pointer);
+        exitButton.touchDragged(touch, pointer);
+        return super.touchDragged(touch, pointer);
+    }
 }
