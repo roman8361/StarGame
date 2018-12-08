@@ -23,8 +23,9 @@ public class ExitButton extends Sprite {
     @Override
     public void resize(Rectangle worldBounce) {
         super.resize(worldBounce);
-        this.worldBounds = worldBounce;   // position.set(0.15f, -0.36f);
-        position.set(SIZE_EXIT_BUTTON, SIZE_EXIT_BUTTON * -2 - 0.06f);
+        this.worldBounds = worldBounce;
+        setBottom(worldBounce.getBottom() + 0.05f);
+        setRight(worldBounce.getRight() - 0.05f);
     }
 
     @Override

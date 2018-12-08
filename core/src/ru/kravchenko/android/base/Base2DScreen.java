@@ -1,5 +1,6 @@
 package ru.kravchenko.android.base;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
@@ -28,7 +29,10 @@ public class Base2DScreen implements Screen, InputProcessor {
 
     private Vector2 touch = new Vector2();
 
-    public Base2DScreen() {
+    protected Game game;
+
+    public Base2DScreen(Game game) {
+        this.game = game;
         this.screenBounds = new Rectangle();
         this.worldBounds = new Rectangle();
         this.glBounds = new Rectangle(0f,0f, 1f, 1f);

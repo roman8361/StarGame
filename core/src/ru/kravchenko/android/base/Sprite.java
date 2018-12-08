@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.kravchenko.android.math.Rectangle;
+import ru.kravchenko.android.utils.Regions;
 
 public abstract class Sprite extends Rectangle {
 
@@ -16,9 +17,27 @@ public abstract class Sprite extends Rectangle {
 
     protected int frame;
 
+    private boolean isDestroyed;
+
+    public boolean isDestroyed() {
+        return isDestroyed;
+    }
+
+    public void setDestroyed(boolean destroyed) {
+        isDestroyed = destroyed;
+    }
+
+    public Sprite() {
+
+    }
+
     public Sprite(TextureRegion region) {
         regions = new TextureRegion[1];
         regions[0] = region;
+    }
+
+    public Sprite(TextureRegion region, int rows, int cols, int frame) {
+        regions = Regions.split(region, rows, cols, frame);
     }
 
     public void draw(SpriteBatch batch) {

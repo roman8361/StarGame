@@ -1,6 +1,8 @@
 package ru.kravchenko.android.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -30,6 +32,12 @@ public class MenuScreen extends Base2DScreen {
 
     private ExitButton exitButton;
 
+    private Music music;
+
+    public MenuScreen(Game game) {
+        super(game);
+    }
+
     @Override
     public void show() {
         super.show();
@@ -37,8 +45,11 @@ public class MenuScreen extends Base2DScreen {
         imageBackgraund = new Texture("textures/sky.jpg");
         background = new Background(new TextureRegion(imageBackgraund));
         star = new Star[STAR_COUNT];
-        startButton = new StartButton(textureAtlas);
+        startButton = new StartButton(textureAtlas, game);
         exitButton = new ExitButton(textureAtlas);
+        music = Gdx.audio.newMusic(Gdx.files.internal("sound/music_fon.mp3"));
+        music.play();
+        music.setLooping(true);
         for (int i = 0; i < star.length; i++) { star[i] = new Star(textureAtlas); }
     }
 
@@ -79,6 +90,7 @@ public class MenuScreen extends Base2DScreen {
     public void dispose() {
         imageBackgraund.dispose();
         textureAtlas.dispose();
+        music.dispose();
         super.dispose();
     }
 
@@ -102,4 +114,5 @@ public class MenuScreen extends Base2DScreen {
         exitButton.touchDragged(touch, pointer);
         return super.touchDragged(touch, pointer);
     }
+
 }
