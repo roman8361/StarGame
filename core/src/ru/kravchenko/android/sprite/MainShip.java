@@ -6,42 +6,49 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.kravchenko.android.base.Sprite;
+import ru.kravchenko.android.base.Ship;
 import ru.kravchenko.android.math.Rectangle;
 import ru.kravchenko.android.pool.BulletPool;
 
-public class MainShip extends Sprite {
+public class MainShip extends Ship {
+
+    private static final int INVALID_POINTER = -1;
 
     private Vector2 speedMainShip0 = new Vector2(0.5f, 0);
 
-    private Vector2 speedMainShip = new Vector2();
+    private int leftPointer = INVALID_POINTER;
 
-    private TextureAtlas atlas;
-
-    private Rectangle worldBounds;
+    private int rightPointer = INVALID_POINTER;
 
     private boolean pressedLeft;
 
-    private boolean pressedRigth;
-
-    private BulletPool bulletPool;
+    private boolean pressedRight;
 
     private Sound shotSound = Gdx.audio.newSound(Gdx.files.internal("sound/shot.wav"));
-
 
     public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         setHeigthProportion(0.15f);
-        this.atlas = atlas;
         this.bulletPool = bulletPool;
+        this.bulletRegion = atlas.findRegion("bulletMainShip");
+        this.bulletHeight = 0.01f;
+        this.bulletSpeed.set(0, 2.0f);
+        this.bulletDamage = 1;
+        this.health = 100;
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
-        position.mulAdd(speedMainShip, delta);
-        chekEndScreenLeft();
-        chekEndScreenRigth();
+        position.mulAdd(speedShip, delta);
+        if (getRight() > worldBounds.getRight()) {
+            setRight(worldBounds.getRight());
+            stop();
+        }
+        if (getLeft() < worldBounds.getLeft()) {
+            setLeft(worldBounds.getLeft());
+            stop();
+        }
     }
 
     @Override
@@ -51,22 +58,18 @@ public class MainShip extends Sprite {
     }
 
     public boolean keyDown(int keycode) {
-       switch (keycode) {
-           case Input.Keys.A:
-           case Input.Keys.LEFT:
-               pressedLeft = true;
-               moveLeft();
-               chekEndScreenLeft();
-               break;
-           case Input.Keys.D:
-           case Input.Keys.RIGHT:
-               pressedRigth = true;
-               moveRigth();
-               chekEndScreenRigth();
-               break;
-           case Input.Keys.UP:
-               break;
-       }
+        switch (keycode) {
+            case Input.Keys.A:
+            case Input.Keys.LEFT:
+                pressedLeft = true;
+                moveLeft();
+                break;
+            case Input.Keys.D:
+            case Input.Keys.RIGHT:
+                pressedRight = true;
+                moveRight();
+                break;
+        }
         return false;
     }
 
@@ -75,19 +78,18 @@ public class MainShip extends Sprite {
             case Input.Keys.A:
             case Input.Keys.LEFT:
                 pressedLeft = false;
-                if (pressedRigth) { moveRigth();}
+                if (pressedRight) { moveRight();}
                 else stop();
-                chekEndScreenLeft();
                 break;
             case Input.Keys.D:
             case Input.Keys.RIGHT:
-                pressedRigth = false;
+                pressedRight = false;
                 if (pressedLeft) { moveLeft();}
                 else stop();
-                chekEndScreenRigth();
                 break;
             case Input.Keys.SPACE:
                 shoot();
+                shotSound.play();
                 break;
         }
         return false;
@@ -95,48 +97,42 @@ public class MainShip extends Sprite {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer) {
-        if (touch.x < 0) {
-            System.out.println("POSITION.X " + position.x);
-            chekEndScreenLeft();
+        if (touch.x < worldBounds.position.x) {
+            if (leftPointer != INVALID_POINTER) return false;
+            leftPointer = pointer;
             moveLeft();
+        } else {
+            if (rightPointer != INVALID_POINTER) return false;
+            rightPointer = pointer;
+            moveRight();
         }
-
-        if (touch.x > 0) moveRigth();
-
-        return super.touchDown(touch, pointer);
+        return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer) {
-        if (touch.x < 0) stop();
-        if (touch.x > 0) stop();
-        return super.touchUp(touch, pointer);
+        if (pointer == leftPointer) {
+        leftPointer = INVALID_POINTER;
+        if (rightPointer != INVALID_POINTER) {
+            moveRight();
+        } else {
+            stop();
+        }
+    } else if (pointer == rightPointer) {
+        rightPointer = INVALID_POINTER;
+        if (leftPointer != INVALID_POINTER) {
+            moveLeft();
+        } else {
+            stop();
+        }
+    }
+        return false;
     }
 
-    private void moveRigth() {
-        speedMainShip.set(speedMainShip0);
-    }
+    private void moveRight() { speedShip.set(speedMainShip0); }
 
-    private void moveLeft() {
-        speedMainShip.set(speedMainShip0).rotate(180);
-    }
+    private void moveLeft() { speedShip.set(speedMainShip0).rotate(180); }
 
-    private void stop() {
-        speedMainShip.setZero();
-    }
-
-    public void shoot() {
-        Bullet bullet = bulletPool.obtain();
-        bullet.set(this, atlas.findRegion("bulletMainShip"), position, new Vector2(0, 1.5f), 0.01f, worldBounds,1  );
-        shotSound.play();
-    }
-
-    private void chekEndScreenLeft(){
-        if (position.x < worldBounds.getLeft() + 0.05f) stop();
-    }
-
-    private void chekEndScreenRigth() {
-        if (position.x > worldBounds.getRight() - 0.05f) stop();
-    }
+    private void stop() { speedShip.setZero(); }
 
 }

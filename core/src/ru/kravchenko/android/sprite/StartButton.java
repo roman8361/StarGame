@@ -23,11 +23,11 @@ public class StartButton extends Sprite {
     }
 
     @Override
-    public void resize(Rectangle worldBounce) {
-        super.resize(worldBounce);
-        this.worldBounds = worldBounce;
-        setBottom(worldBounce.getBottom() + 0.05f);
-        setLeft(worldBounce.getLeft() + 0.05f);
+    public void resize(Rectangle worldBounds) {
+        super.resize(worldBounds);
+        this.worldBounds = worldBounds;
+        setBottom(worldBounds.getBottom() + 0.05f);
+        setLeft(worldBounds.getLeft() + 0.05f);
     }
 
     @Override

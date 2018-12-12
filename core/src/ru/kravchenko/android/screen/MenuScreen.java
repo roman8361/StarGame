@@ -90,7 +90,7 @@ public class MenuScreen extends Base2DScreen {
     public void dispose() {
         imageBackgraund.dispose();
         textureAtlas.dispose();
-        music.dispose();
+//        music.dispose();
         super.dispose();
     }
 
@@ -114,5 +114,6 @@ public class MenuScreen extends Base2DScreen {
         exitButton.touchDragged(touch, pointer);
         return super.touchDragged(touch, pointer);
     }
+
 
 }

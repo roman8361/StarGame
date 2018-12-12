@@ -19,7 +19,7 @@ public class Base2DScreen implements Screen, InputProcessor {
 
     private Rectangle screenBounds; // границы в пикселях
 
-    private Rectangle worldBounds; // границы проекции мировых координат
+    protected Rectangle worldBounds; // границы проекции мировых координат
 
     private Rectangle glBounds;  // дефолтные границы проекции мир GL
 

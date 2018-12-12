@@ -4,11 +4,11 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Rectangle {
 
-    public final Vector2 position = new Vector2();
+    public final Vector2 position = new Vector2(); // позиция по центру
 
-    protected float halfWidth;
+    protected float halfWidth; // половина ширины
 
-    protected float halfHeight;
+    protected float halfHeight; // половина высоты
 
     public Rectangle() { }
 

@@ -19,14 +19,6 @@ public abstract class Sprite extends Rectangle {
 
     private boolean isDestroyed;
 
-    public boolean isDestroyed() {
-        return isDestroyed;
-    }
-
-    public void setDestroyed(boolean destroyed) {
-        isDestroyed = destroyed;
-    }
-
     public Sprite() {
 
     }
@@ -57,7 +49,7 @@ public abstract class Sprite extends Rectangle {
         setWidth(heigth * aspect);
     }
 
-    public void resize(Rectangle worldBounce) { }
+    public void resize(Rectangle worldBounds) { }
 
     public void update(float delta) { }
 
@@ -74,5 +66,11 @@ public abstract class Sprite extends Rectangle {
     public float getScale() { return scale; }
 
     public void setScale(float scale) { this.scale = scale; }
+
+    public boolean isDestroyed() { return isDestroyed; }
+
+    public void setDestroyed(boolean destroyed) {
+        isDestroyed = destroyed;
+    }
 
 }

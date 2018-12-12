@@ -16,10 +16,6 @@ public class Bullet extends Sprite {
 
     private Object owner;
 
-    public Bullet(TextureRegion region) {
-        super(region);
-    }
-
     public Bullet() {
         regions = new TextureRegion[1];
     }
@@ -57,9 +53,7 @@ public class Bullet extends Sprite {
         this.damage = damage;
     }
 
-    public Object getOwner() {
-        return owner;
-    }
+    public Object getOwner() { return owner; }
 
     public void setOwner(Object owner) {
         this.owner = owner;

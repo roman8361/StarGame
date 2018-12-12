@@ -2,6 +2,7 @@ package ru.kravchenko.android.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -11,10 +12,11 @@ import com.badlogic.gdx.math.Vector2;
 import ru.kravchenko.android.base.Base2DScreen;
 import ru.kravchenko.android.math.Rectangle;
 import ru.kravchenko.android.pool.BulletPool;
+import ru.kravchenko.android.pool.EnemyPool;
 import ru.kravchenko.android.sprite.Background;
-import ru.kravchenko.android.sprite.EnemyShip1;
 import ru.kravchenko.android.sprite.MainShip;
 import ru.kravchenko.android.sprite.Star;
+import ru.kravchenko.android.utils.EnemiesEmitter;
 
 public class GameScreen extends Base2DScreen {
 
@@ -32,7 +34,11 @@ public class GameScreen extends Base2DScreen {
 
     private BulletPool bulletPool;
 
-    private EnemyShip1 enemyShip1;
+    private EnemyPool enemyPool;
+
+    private EnemiesEmitter enemiesEmitter;
+
+    private Sound mainShipShootSound;
 
     public GameScreen(Game game) {
         super(game);
@@ -48,8 +54,12 @@ public class GameScreen extends Base2DScreen {
         star = new Star[STAR_COUNT];
         for (int i = 0; i < star.length; i++) { star[i] = new Star(textureAtlas); }
         bulletPool = new BulletPool();
+        mainShipShootSound = Gdx.audio.newSound(Gdx.files.internal("sound/shot.wav"));
         mainShip = new MainShip(textureAtlas, bulletPool);
-        enemyShip1 = new EnemyShip1(textureAtlas);
+
+
+        enemyPool = new EnemyPool(bulletPool, mainShip, worldBounds);
+        enemiesEmitter = new EnemiesEmitter(worldBounds, enemyPool, textureAtlas);
     }
 
     @Override
@@ -63,16 +73,17 @@ public class GameScreen extends Base2DScreen {
     public void update(float delta) {
         for (int i = 0; i < star.length; i++) { star[i].update(delta); }
         mainShip.update(delta);
-        enemyShip1.update(delta);
         bulletPool.updateActiveSprites(delta);
+        enemyPool.updateActiveSprites(delta);
+        enemiesEmitter.generate(delta);
+
     }
 
-    public void chekCollisions() {
-
-    }
+    public void chekCollisions() { }
 
     public void deleteAllDestroid() {
         bulletPool.freeAllDestroyedActiveSprites();
+        enemyPool.freeAllDestroyedActiveSprites();
     }
 
     public void draw() {
@@ -82,8 +93,8 @@ public class GameScreen extends Base2DScreen {
         background.draw(batch);
         for (int i = 0; i < star.length; i++) { star[i].draw(batch); }
         mainShip.draw(batch);
-        enemyShip1.draw(batch);
         bulletPool.drawActiveSprites(batch);
+        enemyPool.drawActiveSprites(batch);
         batch.end();
     }
 
@@ -93,7 +104,6 @@ public class GameScreen extends Base2DScreen {
         background.resize(worldBounds);
         for (int i = 0; i < star.length; i++) { star[i].resize(worldBounds); }
         mainShip.resize(worldBounds);
-        enemyShip1.resize(worldBounds);
     }
 
     @Override
@@ -101,6 +111,8 @@ public class GameScreen extends Base2DScreen {
         imageBackgraund.dispose();
         textureAtlas.dispose();
         bulletPool.dispose();
+        enemyPool.dispose();
+        mainShipShootSound.dispose();
         super.dispose();
     }
 
