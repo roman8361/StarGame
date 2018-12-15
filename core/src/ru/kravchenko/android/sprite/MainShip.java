@@ -1,6 +1,5 @@
 package ru.kravchenko.android.sprite;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.kravchenko.android.base.Ship;
 import ru.kravchenko.android.math.Rectangle;
 import ru.kravchenko.android.pool.BulletPool;
+import ru.kravchenko.android.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
@@ -24,23 +24,40 @@ public class MainShip extends Ship {
 
     private boolean pressedRight;
 
-    private Sound shotSound = Gdx.audio.newSound(Gdx.files.internal("sound/shot.wav"));
-
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, Sound shootSound, Rectangle worldBounds, ExplosionPool explosionPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         setHeigthProportion(0.15f);
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
+        this.reloadInterval = 0.2f; // variable for automatic shoot
         this.bulletRegion = atlas.findRegion("bulletMainShip");
         this.bulletHeight = 0.01f;
         this.bulletSpeed.set(0, 2.0f);
         this.bulletDamage = 1;
-        this.health = 100;
+        this.shootSound = shootSound;
+        this.worldBounds = worldBounds;
+        setToNewGame();
+    }
+
+    public void setToNewGame() {
+        stop();
+        position.x = worldBounds.position.x;
+        this.health = 10;
+        setDestroyed(false);
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
         position.mulAdd(speedShip, delta);
+
+//        reloadTimer += delta;  // bloc automatic shoot
+//        if (reloadTimer >= reloadInterval) {
+//            reloadTimer = 0f;
+//            shoot();
+//        }
+
+
         if (getRight() > worldBounds.getRight()) {
             setRight(worldBounds.getRight());
             stop();
@@ -89,7 +106,7 @@ public class MainShip extends Ship {
                 break;
             case Input.Keys.SPACE:
                 shoot();
-                shotSound.play();
+                shootSound.play();
                 break;
         }
         return false;
@@ -135,4 +152,10 @@ public class MainShip extends Ship {
 
     private void stop() { speedShip.setZero(); }
 
+    public boolean isBulletCollision(Rectangle bullet) {
+        return !(bullet.getRight() < getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > position.y
+                || bullet.getTop() < getBottom());
+    }
 }

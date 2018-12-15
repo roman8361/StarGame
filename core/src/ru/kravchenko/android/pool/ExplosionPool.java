@@ -23,4 +23,5 @@ public class ExplosionPool extends SpritesPool<Explosion> {
     protected Explosion newObject() {
         return new Explosion(explosionRegion, 9, 9, 74, explosionSound);
     }
+
 }
